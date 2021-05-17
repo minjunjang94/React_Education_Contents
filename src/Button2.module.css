@@ -1,0 +1,19 @@
+/*
+.prefix-example {
+    writing-mode : horizontal-tb;
+    scroll-snap-type: y mandatory;
+}
+*/
+
+.big {
+    width : 100px;
+}
+
+.small {
+    width : 50px;
+}
+
+.button {
+    height: 30px;
+    background-color: #aaaaaa;
+}
