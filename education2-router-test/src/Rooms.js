@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Link } from 'react-router-dom';
 
-function Rooms ({ match }) {
+function Rooms ({ match }) { //Route를 통해 렌더링 되는 컴포넌트
     return (
         <div>
             <h2>여기는 방을 소개하는 페이지입니다.</h2>
