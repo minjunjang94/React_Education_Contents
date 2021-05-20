@@ -92,5 +92,108 @@ const add = (a, b) => {
 };
 
 
+// 화살표 함수에서 나머지 매개변수 사용하기
+//% 화살표 함수가 일반 함수와 다른 점은 this와 arguments가 바인딩되지 않는다는 것
+// => arguments가 필요하다면 나머지 매개변수를 이용
+const printLog = {...rest} => console.log(rest);
+printLog(1, 2); // [1, 2]
+
+
+// this 바인딩 때문에 버그가 발생한 경우
+const obj = {
+	value: 1,
+	increase: function() { // increase함수는 일반함수이기에 호출 시 사용된 객체가 this로 바인딩
+		this.value++;
+	},
+};
+obj.increase(); // increase 함수는 일반 함수이므로 호출 시 사옹된 객체가 this로 바인딩
+console.log(obj.value); // 2
+const increase = obj.increase;
+increase(); // 객체 없이 호출되는 경우 전역 객체가 바인딩된다. 
+// 화살표 함수 안에서 사용된 this와 arguments는 자신을 감싸고 있는
+// 가장 가까운 일반 함수의 것을 참조한다. 
+// incresse함수를 화살표 함수로 작성했다면 this는 window객체를 가리키기 때문에
+// 함수를 호출해도 obj.value는 항상 변하지 않는다.
+console.log(obj.value); // 2
+
+
+// 생성자 함수 내부에서 퐈살표 함수 사용
+function Something() {
+	this.value = 1;
+	this.increase = () => this.value++;
+	// 화살표 함수 increase의 this는 가장 가까운 일반 함수인 Something의 this를 참조
+}
+const obj = new Something();
+// new 키워드를 이용해서 생성자 함수를 호출하면 this는 생성되는 객체를 참조한다.
+obj.increase(); // increase 함수의 this는 항상 생성된 객체를 참조하고 obj.value는 계속 증가
+console.log(obj.value); // 2
+const increase = obj.increase;
+increase(); // increase 함수의 this는 항상 생성된 객체를 참조하고 obj.value는 계속 증가
+console.log(obj.value); // 3
+
+
+// setInterval 함수에서 this 객체 사용 시 버그 발생
+function Something() {
+	this.value = 1;
+	setInterval(function increase() {
+		this.value++;
+	}, 1000);
+}
+const obj = new Something();
+// obj.value는 증가하지 않는다. serInterval함수의 임수로 들어간 increase함수는
+// 전역환경에서 실행되기에 this는 window 객체를 참조한다.
+
+
+// setInterval 함수에서 this 객체를 참조하기 위해 편법 사용
+function Something() {
+	this.value = 1;
+	var that = this;
+	setInterval(function increase() {
+		that.value++;
+		// increase함수에서는 closure을 이용해서 미리 저장해둔 that변수를 통해 this객체에 접근
+	}, 1000);
+}
+const obj = new Something();
+
+
+/*
+클로저(Closure) 이란?
+함수가 생성되는 시점에 접근 가능했던 변수들을 생성 이후에도 계속해서 접근할 수 있게
+해주는 기능이다. 접근할 수 있는 변수는 그 함수를 감싸고 있는 상위 함수들의 
+매개변수와 내부 변수들이다.
+*/
+function makeAddFunc(x) {
+	return function add(y) {
+		return x + y;
+	};
+}
+const add5 = makeAddFunc(5);
+console.log(add5(1)); // 6
+const add7 = makeAddFunc(7);
+console.log(add7(1)); // 8
+console.log(add5(1)); // 6
+
+
+// setInterval 함수에서 this 객체를 참조하기 위해 화살표 함수 사용
+function Something() {
+	this.value = 1;
+	setInterval(() => {
+		this.value++; 
+		//화살표 함수를 사용했기 때문에 this는 setInterval의 동작과는 상관없이 obj 참조
+	}, 1000);
+}
+const obj = new Something();
+
+
+
+
+
+
+
+
+
+
+                        
+
 
 		

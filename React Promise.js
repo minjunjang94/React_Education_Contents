@@ -1,0 +1,81 @@
+// 비동기 프로그래밍 : "프로미스"
+
+/*
+프로미스(Promise) 란?
+비동기 상태를 값으로 다룰 수 있는 객체.
+비동기 프로그래밍을 할 때 동기 프로그래밍 방식으로 코드를 작성할 수 있다.
+*/
+
+// 프로미스가 나오기 전 콜백(callback) 패턴을 많이 사용했었다.
+// 콜백 함수의 단점
+// 1. 콜백 함수의 중첩 사용
+function requestData1(callback) {
+	// ... 
+	callback(data); // 2번
+}
+function requestData2(callback) {
+	// ...
+	callback(data); // 4번
+}
+function onSuccess1(data) {
+	console.log(data);
+	requestData2(onSuccess2); // 3번
+}
+function onSuccess2(data) { // 5번
+	console.log(data);
+	// ...
+}
+requestData1(onSuccess1);  // 1번
+// 콜백 패턴은 코드의 흐름이 순차적이지 않기 때문에 코드를 읽기에 어려움이 있다.
+// 프로미스를 사용하면 직관적인 장점이 있다.
+
+
+// 간단한 프로미스 코드 => 순차적으로 작성할 수 있다.
+requestData1() 
+	.then(data => {
+		console.log(data);
+		return requestData2();
+	})
+	.then(data => {
+		console.log(data);
+		// ...
+	});
+	
+	
+/*
+프로미스의 세 가지 상태
+- 대기 중(pending)   : 결과를 기다리는 중 -> 유일히 '이행 됨' 혹은 '거부 됨' 상태로 변경 가능
+- 이행 됨(fulfilled) : 수행이 정상적으로 끝났고 결괏값을 가지고 있음
+- 거부 됨(rejected)  : 수행이 비정상적으로 끝났음 -> 처리됨(settled) 상태라고 부름 : 더이상 다른 상태로 변경되지 않음
+*/
+
+// 프로미스를 생성하는 방법
+const p1 = new Promise((resolve, reject) => {
+	//...
+	// resolve(data)
+	// or reject('error message')
+	
+	// 일반적으로 new 키워드를 사용하면 프로미스가 생성된다. (대기 중 상태이다.)
+	// 비동기로 어떤 작업을 수행 후 성공하면 resolve, 실패하면 reject
+	// resolve를 호출하면 p1객체는 이행 됨 상태로 변경
+	// reject를 호출하면 p1객체는 거부 됨 상태로 변경
+	
+	// new 키워드를 사용해서 프로미스를 생성하는 순간 생성자의 입력 함수가 실행
+	// 만약 API요청을 보내는 비동기 코드가 있다면 프로미스가 생성되는 순간 요청
+	
+});
+const p2 = Promise.reject('error message');
+// new 키워드를 사용하지 않고 Promise.reject를 호출하면 거부됨 상태인 프로미스가 생성
+const p3 = Promise.resolve(param);
+// Promise.resolve를 호출해도 프로미스 생성
+// 만약 입력값이 프로미스였다면 그 객체 그대로 반환,
+// 아니라면 이행됨 상태인 프로미스 반환
+
+
+// Promise.resolve의 반환값
+const p1 = Promise.resolve(123);
+console.log(p1 !== 123); // true
+const p2 = new Promise(resolve => setTimeout(() => resolve(10), 1));
+console.log(Promise.resolve(p2) === p2); // true
+
+	
