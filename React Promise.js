@@ -72,6 +72,11 @@ const p3 = Promise.resolve(param);
 // 아니라면 이행됨 상태인 프로미스 반환
 
 
+
+/*
+프로미스 이용하기 : then
+*/
+
 // Promise.resolve의 반환값
 const p1 = Promise.resolve(123);
 console.log(p1 !== 123); // true
@@ -111,9 +116,54 @@ requestData1()
 
 // 거부 됨 상태가 되면 onReject 함수 호출
 Promise.reject('err')
-	.then(() => console.log('then 1'))
-	.then(() => console.log('then 2'))
-	.then(() => console.log('then 3')) => console.log('then 4'))
-	.then(() => console.log('then 5')) => console.log('then 6'));
+	.then(() => console.log('then 1')) // 코드 불록 생략
+	.then(() => console.log('then 2')) // 코드 불록 생략
+	// 거부 됨 상태인 프로시므는 처음 만나는 onReject 함수를 호출
+	.then(() => console.log('then 3'), => console.log('then 4')) // then 4 출력
+	// onReject 함수는 undefined를 결과로 가지면서 이행 됨 상태인 프로미스 생성
+	.then(() => console.log('then 5'), => console.log('then 6')); // then 5 출력
+// then 메서드의 가장 중요한 특징은 "항상 연결된 순서대로 호출된다."
+
+
+
+/*
+프로미스 이용하기 : catch
+*/
+// 같은 기능을 하는 then 메서드와 catch 메서드
+Promise.reject(1).then(null, error => {
+	console.log(error);
+});
+Promise.reject(1).catch(error => {
+	console.log(error);
+});
+// 예외 처리는 then 메서드의 onReject 함수보다 catch 메서드를 사용하는 것이 좋다. 
+// catch가 가독성이 더 좋음.
+
+
+// then 메서드의 onReject를 사용했을 경우 문제점
+Promise.resolve().then(
+	() => { // then 메서드의 onResolve 함수에서 발생한 예외는 같은 then메서드의 onReject 함수에서 처리되지 않는다.
+		throw new Error('some error');
+	},
+	error => { // 처리되지 않는다.
+		console.log(error);
+	},
+); //result : Unhandled promise rejection 발생 
+   // -> 거부 됨 상태인 프로미스를 처리하지 않았기 때문
+   
+   
+// onReject 함수를 사용하지 않고 catch를 사용
+Promise.resolve()
+	.then(() => {
+		throw new Error('some error');
+	})
+	.catch(error => {		
+		console.log(error);
+	});
+
+
+
+
+
 	
 	
