@@ -78,4 +78,42 @@ console.log(p1 !== 123); // true
 const p2 = new Promise(resolve => setTimeout(() => resolve(10), 1));
 console.log(Promise.resolve(p2) === p2); // true
 
+
+//then 메서드를 사용한 간단한 코드
+requestData().then(onResolve, onReject);
+// 처리됨 상태가 되면 onResolve 함수가 호출되고, 거부됨 상태가 되면 onReject 함수가 호출
+Promise.resolve(123).then(data => console.log(data); // 123
+Promise.reject('err').then(null, error => console.log(error)); // 에러발생
+
+
+// 연속해서 then 메서드 호출
+requestData1()
+	.then(data => {
+		console.log(data);
+		return requestData2();
+		// onResolve 또는 onReject 함수에서 프로미스를 반환하면 then 메서드는 그 값 그대로 반환
+	})
+	.then(data => {
+		return data + 1;
+		// 만약 프로미스가 아닌 값을 반환하면 then메서드는 이행 됨 상태인 프로미스를 반환
+	})
+	.then(data => {
+		throw new Error('some error');
+		// onResolve 또는 onReject 함수 내부에서 예외가 발생하면 then 메서드는 거부 됨
+		// 상태인 프로미스를 반환
+	})
+	.then(null, error => {
+		console.log(error);
+	});
+// 결과적으로 then 메서드는 항상 프로미스를 반환
+// 프로미스가 거부됨 상태인 경우에는 onReject 함수가 존재하는 then을 만날때 까지 이동
+
+
+// 거부 됨 상태가 되면 onReject 함수 호출
+Promise.reject('err')
+	.then(() => console.log('then 1'))
+	.then(() => console.log('then 2'))
+	.then(() => console.log('then 3')) => console.log('then 4'))
+	.then(() => console.log('then 5')) => console.log('then 6'));
+	
 	
